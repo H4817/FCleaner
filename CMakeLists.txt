@@ -3,4 +3,4 @@ project(FCleaner C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(FCleaner main.c)
+add_executable(FCleaner FCleaner.c)
