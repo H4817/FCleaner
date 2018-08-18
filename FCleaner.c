@@ -2,9 +2,26 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+int isFile(const char *path)
+{
+    struct stat pathStat;
+    stat(path, &pathStat);
+    return S_ISREG(pathStat.st_mode);
+}
+
+int isDirectory(const char *path)
+{
+    struct stat pathStat;
+    stat(path, &pathStat);
+    return S_ISDIR(pathStat.st_mode);
+}
 
 bool isPathCorrect(char *path) {
-    return (path && access(path, F_OK|R_OK|W_OK) != -1);
+    return (path && access(path, F_OK | R_OK | W_OK) != -1);
 }
 
 int clean(char *path) {
