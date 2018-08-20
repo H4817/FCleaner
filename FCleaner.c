@@ -53,7 +53,7 @@ int removeFile(const char *path) {
 }
 
 bool isPathCorrect(const char *path) {
-    return (path && access(path, F_OK | R_OK | W_OK) != -1);
+    return (path && *path != '\0' && access(path, F_OK | R_OK | W_OK) != -1);
 }
 
 int clean(const char *path) {
