@@ -24,7 +24,7 @@ int removeFile(const char *path) {
     pFile = fopen(path, "rb+");
     if (pFile == NULL) {
         fputs("File error", stderr);
-        exit(1);
+        return -1;
     }
 
     fseek(pFile, 0, SEEK_END);
@@ -34,10 +34,13 @@ int removeFile(const char *path) {
     buffer = (char *) calloc(lSize, sizeof(char));
     if (buffer == NULL) {
         fputs("Memory error", stderr);
-        exit(2);
+        return -2;
     }
 
-    fwrite(buffer, (sizeof(char) * lSize), 1, pFile);
+    if (fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != (sizeof(char) * lSize)) {
+        fputs("Cleaning memory error", stderr);
+        return -3;
+    }
 
     fclose(pFile);
     free(buffer);
