@@ -37,8 +37,8 @@ int removeFile(const char *path) {
         return -2;
     }
 
-    if (fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != (sizeof(char) * lSize)) {
-        fputs("Cleaning memory error", stderr);
+    if (fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
+        fprintf(stderr, "'%s' cleaning memory error\n", path);
         return -3;
     }
 
@@ -60,7 +60,7 @@ int removeItems(const char *filepath, const struct stat *info,
         removeFile(filepath);
     else if (typeflag == FTW_DP || typeflag == FTW_D) {
         rmdir(filepath) ?
-        printf("Cannot delete the directory: '%s'", filepath) :
+        printf("Cannot delete the directory: '%s'\n", filepath) :
         printf("The directory: '%s' deleted successfully\n", filepath);
     }
     else if (typeflag == FTW_DNR) {
