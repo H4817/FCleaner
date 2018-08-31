@@ -73,15 +73,7 @@ int removeItems(const char *filepath, const struct stat *info,
 
 
 int removeDirectory(const char *const dirpath) {
-    int result;
-    if (dirpath == NULL || *dirpath == '\0')
-        return errno = EINVAL;
-
-    result = nftw(dirpath, removeItems, USE_FDS, FTW_DEPTH | FTW_PHYS);
-    if (result >= 0)
-        errno = result;
-
-    return errno;
+    return (nftw(dirpath, removeItems, USE_FDS, FTW_DEPTH | FTW_PHYS) >= 0);
 }
 
 int isFile(const char *path) {
@@ -104,11 +96,7 @@ int clean(const char *path) {
     if (isFile(path)) {
         return removeFile(path);
     } else if (isDirectory(path)) {
-        if (removeDirectory(path)) {
-            fprintf(stderr, "%s.\n", strerror(errno));
-            return EXIT_FAILURE;
-        }
-        return 0;
+        return removeDirectory(path);
     }
     return -1;
 }
