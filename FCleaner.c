@@ -37,7 +37,7 @@ int removeFile(const char *path) {
         return -2;
     }
 
-    if (fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
+    if (lSize != 0 && fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
         fprintf(stderr, "'%s' cleaning memory error\n", path);
         return -3;
     }
@@ -73,7 +73,7 @@ int removeItems(const char *filepath, const struct stat *info,
 
 
 int removeDirectory(const char *const dirpath) {
-    return (nftw(dirpath, removeItems, USE_FDS, FTW_DEPTH | FTW_PHYS) >= 0);
+    return nftw(dirpath, removeItems, USE_FDS, FTW_DEPTH | FTW_PHYS);
 }
 
 int isFile(const char *path) {
