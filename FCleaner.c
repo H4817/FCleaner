@@ -16,6 +16,9 @@
 #define USE_FDS 15
 #endif
 
+static char const nameset[] =
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.";
+
 int removeFile(const char *path) {
     FILE *pFile;
     long lSize;
