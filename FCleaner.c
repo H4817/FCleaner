@@ -16,8 +16,55 @@
 #define USE_FDS 15
 #endif
 
+#if defined _WIN32 || defined __WIN32__ || defined __CYGWIN__ || defined __EMX__ || defined __DJGPP__
+/* Win32, Cygwin, OS/2, DOS */
+# define ISSLASH(C) ((C) == '/' || (C) == '\\')
+#endif
+
+#ifndef ISSLASH
+# define ISSLASH(C) ((C) == '/')
+#endif
+
+# ifndef FILE_SYSTEM_PREFIX_LEN
+#  if FILE_SYSTEM_ACCEPTS_DRIVE_LETTER_PREFIX
+/* This internal macro assumes ASCII, but all hosts that support drive
+       letters use ASCII.  */
+#   define _IS_DRIVE_LETTER(c) (((unsigned int) (c) | ('a' - 'A')) - 'a' \
+				<= 'z' - 'a')
+#   define FILE_SYSTEM_PREFIX_LEN(Filename) \
+	   (_IS_DRIVE_LETTER ((Filename)[0]) && (Filename)[1] == ':' ? 2 : 0)
+#  else
+#   define FILE_SYSTEM_PREFIX_LEN(Filename) 0
+#  endif
+# endif
+
+
+
 static char const nameset[] =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.";
+
+char * getName (char const *filepath)
+{
+    char const *base = filepath + FILE_SYSTEM_PREFIX_LEN (filepath);
+    char const *p;
+    bool sawSlash = false;
+
+    while (ISSLASH (*base))
+        base++;
+
+    for (p = base; *p; p++)
+    {
+        if (ISSLASH (*p))
+            sawSlash = true;
+        else if (sawSlash)
+        {
+            base = p;
+            sawSlash = false;
+        }
+    }
+
+    return (char *) base;
+}
 
 int removeFile(const char *path) {
     FILE *pFile;
