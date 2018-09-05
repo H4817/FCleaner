@@ -43,6 +43,8 @@
 static char const nameset[] =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.";
 
+enum { N_ITERATIONS = 8 };
+
 char * getName (char const *filepath)
 {
     char const *base = filepath + FILE_SYSTEM_PREFIX_LEN (filepath);
@@ -67,33 +69,36 @@ char * getName (char const *filepath)
 }
 
 int removeFile(const char *path) {
-    FILE *pFile;
-    long lSize;
-    char *buffer;
+    for (int i = 0; i < N_ITERATIONS; ++i) {
+        FILE *pFile;
+        long lSize;
+        char *buffer;
 
-    pFile = fopen(path, "rb+");
-    if (pFile == NULL) {
-        fputs("File error", stderr);
-        return -1;
+        pFile = fopen(path, "rb+");
+        if (pFile == NULL) {
+            fputs("File error", stderr);
+            return -1;
+        }
+
+        fseek(pFile, 0, SEEK_END);
+        lSize = ftell(pFile);
+        rewind(pFile);
+
+        buffer = (char *) calloc(lSize, sizeof(char));
+        if (buffer == NULL) {
+            fputs("Memory error", stderr);
+            return -2;
+        }
+
+        if (lSize != 0 && fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
+            fprintf(stderr, "'%s' cleaning memory error\n", path);
+            return -3;
+        }
+
+        sync();
+        fclose(pFile);
+        free(buffer);
     }
-
-    fseek(pFile, 0, SEEK_END);
-    lSize = ftell(pFile);
-    rewind(pFile);
-
-    buffer = (char *) calloc(lSize, sizeof(char));
-    if (buffer == NULL) {
-        fputs("Memory error", stderr);
-        return -2;
-    }
-
-    if (lSize != 0 && fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
-        fprintf(stderr, "'%s' cleaning memory error\n", path);
-        return -3;
-    }
-
-    fclose(pFile);
-    free(buffer);
     if (remove(path) == 0) {
         printf("The file: '%s' deleted successfully\n", path);
     } else {
