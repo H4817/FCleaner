@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <time.h>
 #include <ftw.h>
+#include <time.h>
 
 #ifndef USE_FDS
 #define USE_FDS 15
@@ -45,6 +46,19 @@ static char const nameset[] =
 
 enum { N_ITERATIONS = 8 };
 
+unsigned char *generateRandomBytes(size_t numBytes)
+{
+    unsigned char *b = malloc (numBytes);
+    size_t i;
+
+    for (i = 0; i < numBytes; i++)
+    {
+        b[i] = rand();
+    }
+
+    return b;
+}
+
 char * getName (char const *filepath)
 {
     char const *base = filepath + FILE_SYSTEM_PREFIX_LEN (filepath);
@@ -72,7 +86,7 @@ int removeFile(const char *path) {
     for (int i = 0; i < N_ITERATIONS; ++i) {
         FILE *pFile;
         long lSize;
-        char *buffer;
+        unsigned char *buffer;
 
         pFile = fopen(path, "rb+");
         if (pFile == NULL) {
@@ -84,13 +98,13 @@ int removeFile(const char *path) {
         lSize = ftell(pFile);
         rewind(pFile);
 
-        buffer = (char *) calloc(lSize, sizeof(char));
+        buffer = generateRandomBytes(sizeof(unsigned char) * lSize);
         if (buffer == NULL) {
             fputs("Memory error", stderr);
             return -2;
         }
 
-        if (lSize != 0 && fwrite(buffer, (sizeof(char) * lSize), 1, pFile) != 1) {
+        if (lSize != 0 && fwrite(buffer, (sizeof(unsigned char) * lSize), 1, pFile) != 1) {
             fprintf(stderr, "'%s' cleaning memory error\n", path);
             return -3;
         }
@@ -162,6 +176,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
     if (isPathCorrect(argv[1])) {
+        srand ((unsigned int) time (NULL));
         return clean(argv[1]);
     } else {
         fprintf(stderr, "'%s' not found or not writable\n", argv[1]);
