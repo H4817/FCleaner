@@ -98,7 +98,9 @@ int removeFile(const char *path) {
         lSize = ftell(pFile);
         rewind(pFile);
 
-        buffer = generateRandomBytes(sizeof(unsigned char) * lSize);
+        buffer = (i % 3 == 0)
+                ? generateRandomBytes(sizeof(unsigned char) * lSize)
+                : (unsigned char *) calloc(lSize, sizeof(unsigned char));
         if (buffer == NULL) {
             fputs("Memory error", stderr);
             return -2;
