@@ -118,7 +118,7 @@ int removeFile(const char *path) {
     if (remove(path) == 0) {
         printf("The file: '%s' deleted successfully\n", path);
     } else {
-        printf("Unable to delete: '%s'\n", path);
+        fprintf(stderr, "Unable to delete: '%s'\n", path);
     }
     return 0;
 }
@@ -130,13 +130,15 @@ int removeItems(const char *filepath, const struct stat *info,
     else if (typeflag == FTW_F)
         removeFile(filepath);
     else if (typeflag == FTW_DP || typeflag == FTW_D) {
-        rmdir(filepath) ?
-        printf("Cannot delete the directory: '%s'\n", filepath) :
-        printf("The directory: '%s' deleted successfully\n", filepath);
+        rmdir(filepath)
+        ? fprintf(stderr, "Cannot delete the directory: '%s/'\n", filepath)
+        : printf("The directory: '%s/' deleted successfully\n", filepath);
     }
     else if (typeflag == FTW_DNR) {
-        printf(" %s/ (unreadable)\n", filepath);
-        rmdir(filepath);
+        fprintf(stderr, " %s/ (unreadable)\n", filepath);
+        rmdir(filepath)
+        ? fprintf(stderr, "Cannot delete the directory: '%s/'\n", filepath)
+        : printf("The directory: '%s/' deleted successfully\n", filepath);
     }
 
     return 0;
