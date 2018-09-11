@@ -82,7 +82,22 @@ char * getName (char const *filepath)
     return (char *) base;
 }
 
+int renameFile(char *path) {
+    char * oldName = NULL;
+    for (size_t i = (strlen(path) - 1); i > 0; --i) {
+        oldName = strdup(path);
+        if (ISSLASH(path[i])) {
+            break;
+        }
+        path[i] = nameset[(rand() % strlen(nameset) + 1)];
+        rename(oldName, path);
+    }
+    free(oldName);
+    return 0;
+}
+
 int removeFile(const char *path) {
+    renameFile(path);
     for (int i = 0; i < N_ITERATIONS; ++i) {
         FILE *pFile;
         long lSize;
