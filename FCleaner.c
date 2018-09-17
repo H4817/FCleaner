@@ -82,6 +82,16 @@ char * getName (char const *filepath)
     return (char *) base;
 }
 
+void rmChar(char *str, size_t pos) {
+    char *src, *dst;
+    int i = 0;
+    for (src = dst = str; *src != '\0'; src++, i++) {
+        *dst = *src;
+        if (i != pos) dst++;
+    }
+    *dst = '\0';
+}
+
 const char* renameFile(const char *cpath) {
     char * oldName = NULL;
     char * path = (char *) cpath;
