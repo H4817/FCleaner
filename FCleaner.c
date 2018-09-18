@@ -46,21 +46,18 @@ static char const nameset[] =
 
 enum { N_ITERATIONS = 8 };
 
-unsigned char *generateRandomBytes(size_t numBytes)
-{
+unsigned char *generateRandomBytes(size_t numBytes) {
     unsigned char *b = malloc (numBytes);
     size_t i;
 
-    for (i = 0; i < numBytes; i++)
-    {
+    for (i = 0; i < numBytes; i++) {
         b[i] = rand();
     }
 
     return b;
 }
 
-char * getName (char const *filepath)
-{
+char * getName (char const *filepath) {
     char const *base = filepath + FILE_SYSTEM_PREFIX_LEN (filepath);
     char const *p;
     bool sawSlash = false;
@@ -83,11 +80,14 @@ char * getName (char const *filepath)
 }
 
 void rmChar(char *str, size_t pos) {
-    char *src, *dst;
+    char *src;
+    char *dst;
     int i = 0;
     for (src = dst = str; *src != '\0'; src++, i++) {
         *dst = *src;
-        if (i != pos) dst++;
+        if (i != pos) {
+            dst++;
+        }
     }
     *dst = '\0';
 }
