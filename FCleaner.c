@@ -65,12 +65,10 @@ char * getName (char const *filepath) {
     while (ISSLASH (*base))
         base++;
 
-    for (p = base; *p; p++)
-    {
+    for (p = base; *p; p++) {
         if (ISSLASH (*p))
             sawSlash = true;
-        else if (sawSlash)
-        {
+        else if (sawSlash) {
             base = p;
             sawSlash = false;
         }
